@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#183c35">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<title>Meu Motorhome — Controle de Gastos</title>
+<style>
+:root{--green:#183c35;--green2:#31564c;--cream:#d9e9c8;--bg:#f3f5f1;--ink:#18231f;--muted:#66736d;--line:#dce3dc;--white:#fff;--red:#b43e35}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}header{background:var(--green);color:white;padding:24px 18px 20px;border-radius:0 0 24px 24px}.brand{display:flex;gap:12px;align-items:center}.logo{width:54px;height:54px;border-radius:15px;background:var(--cream);display:grid;place-items:center;color:var(--green);font-size:29px}.brand h1{font-size:21px;margin:0}.brand p{margin:3px 0 0;color:var(--cream);font-size:13px}.eyebrow{font-size:12px;letter-spacing:1.5px;color:var(--cream);margin-top:22px}.total{font-size:36px;font-weight:750;letter-spacing:-1px;margin:3px 0 15px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--green2);padding:12px;border-radius:13px}.stat label{display:block;font-size:12px;color:var(--cream);margin-bottom:4px}.stat strong{font-size:18px}.stat input{width:100%;background:transparent;border:0;color:white;font:700 18px system-ui;outline:none}.progress{height:7px;background:#46645b;border-radius:9px;overflow:hidden;margin-top:14px}.progress div{height:100%;background:var(--cream);width:0}#budgetText{font-size:12px;color:var(--cream);margin-top:6px}.wrap{max-width:760px;margin:auto;padding:14px 14px 40px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#e4e9e2;border-radius:13px;padding:5px;margin:0 0 16px}.tabs button{border:0;background:transparent;border-radius:9px;padding:11px 4px;font-weight:650;color:#526058}.tabs button.active{background:white;color:var(--green);box-shadow:0 1px 4px #0001}.panel{background:white;border:1px solid var(--line);border-radius:17px;padding:17px;margin-bottom:13px}.panel h2{font-size:18px;margin:0 0 14px}.field{margin:0 0 13px}.field label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}.field input,.field select,.field textarea,.search{width:100%;border:1px solid #ccd6ce;border-radius:10px;padding:12px;background:white;color:var(--ink);font:inherit;min-width:0}.field textarea{resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:11px;background:var(--green);color:white;font-weight:700;padding:13px 15px;font:700 15px system-ui;cursor:pointer}.btn.secondary{background:#e8eee7;color:var(--green);border:1px solid var(--line)}.btn.danger{background:#fff0ef;color:var(--red);padding:8px 10px}.btn.full{width:100%}.entry{border-bottom:1px solid var(--line);padding:13px 0;display:flex;gap:12px;align-items:flex-start}.entry:last-child{border-bottom:0}.entry-main{flex:1;min-width:0}.entry-title{font-weight:700;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}.entry-amount{font-weight:750;white-space:nowrap}.actions{display:flex;gap:6px;margin-top:8px}.actions button{font-size:12px;padding:6px 9px}.muted{color:var(--muted);font-size:13px}.catrow{margin:15px 0}.catline{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:6px}.bar{height:7px;border-radius:9px;background:#e9eee8;overflow:hidden}.bar div{height:100%;background:#537b60}.hidden{display:none!important}.empty{text-align:center;padding:26px 8px;color:var(--muted)}.notice{font-size:12px;color:var(--muted);line-height:1.5;padding:8px 3px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172c25;color:white;padding:12px 17px;border-radius:12px;box-shadow:0 5px 24px #0003;display:none;max-width:90%;z-index:9}
+@media(max-width:390px){.total{font-size:31px}.grid{gap:8px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">🚐</div><div><h1>Meu Motorhome</h1><p>Controle de gastos · Projeto Isuzu NPR</p></div></div>
+ <div class="eyebrow">TOTAL INVESTIDO</div><div class="total" id="total">$0.00</div>
+ <div class="stats">
+  <div class="stat"><label>Lançamentos</label><strong id="count">0</strong></div>
+  <div class="stat"><label>Orçamento (USD)</label><input id="budget" type="number" min="0" step=".01" value="30000" aria-label="Orçamento em dólares"></div>
+ </div>
+ <div class="progress"><div id="progress"></div></div><div id="budgetText">Saldo: $30,000.00</div>
+</header>
+<main class="wrap">
+ <nav class="tabs" style="grid-template-columns:repeat(4,1fr)"><button class="active" data-tab="formPanel">＋ Gastos</button><button data-tab="historyPanel">☷ Histórico</button><button data-tab="giftPanel">🎁 Parcerias</button><button data-tab="summaryPanel">▥ Resumo</button></nav>
+ <section id="formPanel" class="panel">
+  <h2 id="formTitle">Adicionar despesa</h2>
+  <form id="expenseForm">
+   <div class="field"><label for="description">O que você comprou ou pagou?</label><input id="description" required maxlength="160" placeholder="Ex.: Inversor 48V 5000W"></div>
+   <div class="grid">
+    <div class="field"><label for="amount">Valor (US$)</label><input id="amount" required type="number" min=".01" step=".01" placeholder="96.37"></div>
+    <div class="field"><label for="date">Data</label><input id="date" type="date" required></div>
+   </div>
+   <div class="field"><label for="category">Categoria</label><select id="category"></select></div>
+   <div class="grid">
+    <div class="field"><label for="paidBy">Quem pagou?</label><select id="paidBy"><option>André</option><option>Tays</option><option>Ambos</option></select></div>
+    <div class="field"><label for="payment">Pagamento</label><select id="payment"><option>Cartão</option><option>Dinheiro</option><option>Débito</option><option>Transferência</option><option>Financiamento</option><option>Outro</option></select></div>
+   </div>
+   <div class="field"><label for="notes">Observações (opcional)</label><textarea id="notes" rows="2" placeholder="Loja, modelo, parcela, garantia..."></textarea></div>
+   <button class="btn full" type="submit" id="saveBtn">Salvar despesa</button>
+   <button class="btn secondary full hidden" type="button" id="cancelEdit" style="margin-top:8px">Cancelar edição</button>
+  </form>
+ </section>
+ <section id="historyPanel" class="panel hidden">
+  <h2>Histórico de despesas</h2><input class="search" id="search" placeholder="Buscar despesa ou categoria...">
+  <div class="field" style="margin-top:10px"><select id="filterCategory" aria-label="Filtrar categoria"><option value="">Todas as categorias</option></select></div>
+  <div id="history"></div>
+  <button class="btn secondary full" id="exportBtn">Exportar / copiar CSV</button>
+ </section>
+ <section id="giftPanel" class="panel hidden">
+  <h2 id="giftFormTitle">Registrar produto recebido sem custo</h2>
+  <p class="muted">Informe o valor de mercado do produto recebido em parceria. Esse valor será contabilizado como economia, separado dos gastos pagos.</p>
+  <form id="giftForm">
+   <div class="field"><label for="giftProduct">Produto recebido</label><input id="giftProduct" required maxlength="160" placeholder="Ex.: bateria LiFePO4 48V"></div>
+   <div class="grid">
+    <div class="field"><label for="giftValue">Valor de mercado (US$)</label><input id="giftValue" required type="number" min=".01" step=".01" placeholder="899.00"></div>
+    <div class="field"><label for="giftDate">Data de recebimento</label><input id="giftDate" type="date" required></div>
+   </div>
+   <div class="field"><label for="giftBrand">Marca / empresa parceira</label><input id="giftBrand" maxlength="120" placeholder="Ex.: WattCycle"></div>
+   <div class="field"><label for="giftType">Tipo de parceria</label><select id="giftType"><option>Produto gratuito</option><option>Permuta / troca por conteúdo</option><option>Patrocínio</option><option>Desconto integral</option><option>Outro</option></select></div>
+   <div class="field"><label for="giftNotes">Observações (opcional)</label><textarea id="giftNotes" rows="2" placeholder="Modelo, link, entregáveis combinados..."></textarea></div>
+   <button class="btn full" type="submit" id="giftSaveBtn">Salvar produto recebido</button>
+   <button class="btn secondary full hidden" type="button" id="giftCancelEdit" style="margin-top:8px">Cancelar edição</button>
+  </form>
+  <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+  <h2>Produtos recebidos em parceria</h2>
+  <div class="stats" style="margin-bottom:14px">
+   <div class="stat" style="background:#e8eee7;color:var(--green)"><label style="color:var(--muted)">Economia total</label><strong id="giftTotal">$0.00</strong></div>
+   <div class="stat" style="background:#e8eee7;color:var(--green)"><label style="color:var(--muted)">Produtos recebidos</label><strong id="giftCount">0</strong></div>
+  </div>
+  <div id="giftHistory"></div>
+  <button class="btn secondary full" id="giftExportBtn">Exportar / copiar lista de parcerias (CSV)</button>
+ </section>
+ <section id="summaryPanel" class="panel hidden">
+  <h2>Resumo do projeto</h2><p class="muted" id="summaryIntro">Gastos organizados por categoria.</p><div id="summary"></div>
+  <div class="grid" style="margin-top:16px">
+   <div class="stat" style="background:#e8eee7;color:var(--green)"><label style="color:var(--muted)">Economia em parcerias</label><strong id="summaryGiftTotal">$0.00</strong></div>
+   <div class="stat" style="background:#e8eee7;color:var(--green)"><label style="color:var(--muted)">Gastos menos economia</label><strong id="netTotal">$0.00</strong></div>
+  </div>
+  <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+  <h2>Backup dos dados</h2><p class="muted">Exporte uma cópia para guardar. Você também pode importar um backup feito anteriormente neste aparelho.</p>
+  <div class="grid"><button class="btn secondary" id="backupBtn">Baixar backup</button><label class="btn secondary" style="text-align:center;cursor:pointer">Importar backup<input id="importFile" type="file" accept="application/json" hidden></label></div>
+ </section>
+ <p class="notice">Seus lançamentos são salvos no armazenamento local deste navegador neste aparelho. Isso não sincroniza automaticamente com outros celulares. Exporte um backup regularmente e não limpe os dados do navegador sem fazer uma cópia.</p>
+</main><div id="toast" class="toast" role="status"></div>
+<script>
+const CATEGORIES=["Materiais de construção","Sistema elétrico 48V","Baterias e inversor","Painéis solares","Encanamento e água","Cozinha","Banheiro","Isolamento e paredes","Móveis e acabamento","Ferramentas","Mecânica e caminhão","Ar-condicionado","Combustível e transporte","Documentação","Outros"];
+const KEY="meuMotorhomeExpensesV1", BKEY="meuMotorhomeBudgetV1";
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString("en-US",{style:"currency",currency:"USD"});
+let expenses=[], editingId=null, gifts=[], editingGiftId=null;
+try{expenses=JSON.parse(localStorage.getItem(KEY)||"[]");if(!Array.isArray(expenses))expenses=[];}catch{expenses=[]}
+try{gifts=JSON.parse(localStorage.getItem("meuMotorhomeGiftsV1")||"[]");if(!Array.isArray(gifts))gifts=[];}catch{gifts=[]}
+$("budget").value=localStorage.getItem(BKEY)||"30000";
+function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function persist(){localStorage.setItem(KEY,JSON.stringify(expenses));localStorage.setItem("meuMotorhomeGiftsV1",JSON.stringify(gifts));localStorage.setItem(BKEY,$("budget").value||"0");render()}
+function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2300)}
+function populate(sel,all=false){sel.innerHTML=(all?'<option value="">Todas as categorias</option>':'')+CATEGORIES.map(c=>`<option>${safe(c)}</option>`).join("")}
+populate($("category"));populate($("filterCategory"),true);
+$("date").value=new Date().toLocaleDateString("en-CA");
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["formPanel","historyPanel","giftPanel","summaryPanel"].forEach(id=>$(id).classList.toggle("hidden",id!==b.dataset.tab));if(b.dataset.tab==="historyPanel")renderHistory();if(b.dataset.tab==="giftPanel")renderGifts();if(b.dataset.tab==="summaryPanel")renderSummary()}));
+$("budget").addEventListener("change",()=>{localStorage.setItem(BKEY,$("budget").value||"0");render()});
+$("expenseForm").addEventListener("submit",e=>{e.preventDefault();const item={id:editingId??(Date.now()+Math.floor(Math.random()*1000)),description:$("description").value.trim(),amount:Math.round(Number($("amount").value)*100)/100,date:$("date").value,category:$("category").value,paidBy:$("paidBy").value,payment:$("payment").value,notes:$("notes").value.trim()};if(!item.description||item.amount<=0)return;if(editingId!==null)expenses=expenses.map(x=>x.id===editingId?item:x);else expenses.unshift(item);cancelEdit();persist();toast(editingId===null?"Despesa salva!":"Despesa atualizada!")});
+function cancelEdit(){$("expenseForm").reset();$("date").value=new Date().toLocaleDateString("en-CA");editingId=null;$("formTitle").textContent="Adicionar despesa";$("saveBtn").textContent="Salvar despesa";$("cancelEdit").classList.add("hidden")}
+$("cancelEdit").addEventListener("click",cancelEdit);
+function editExpense(id){const e=expenses.find(x=>x.id===id);if(!e)return;editingId=id;for(const k of ["description","amount","date","category","paidBy","payment","notes"])$(k).value=e[k]??"";$("formTitle").textContent="Editar despesa";$("saveBtn").textContent="Salvar alterações";$("cancelEdit").classList.remove("hidden");document.querySelector('[data-tab="formPanel"]').click();window.scrollTo({top:0,behavior:"smooth"})}
+function deleteExpense(id){if(!confirm("Excluir esta despesa?"))return;expenses=expenses.filter(x=>x.id!==id);if(editingId===id)cancelEdit();persist();toast("Despesa excluída")}
+function render(){const total=expenses.reduce((s,e)=>s+Number(e.amount),0),budget=Number($("budget").value)||0;$("total").textContent=money(total);$("count").textContent=expenses.length;$("progress").style.width=(budget>0?Math.min(100,total/budget*100):0)+"%";$("budgetText").textContent=`Saldo: ${money(budget-total)} · ${budget>0?Math.round(total/budget*100):0}% do orçamento`;renderHistory();renderGifts();renderSummary()}
+function renderHistory(){const q=$("search").value.toLowerCase(),cat=$("filterCategory").value;const list=expenses.filter(e=>(!cat||e.category===cat)&&[e.description,e.category,e.paidBy,e.notes].join(" ").toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);if(!list.length){$("history").innerHTML='<div class="empty">Nenhuma despesa encontrada.<br>Adicione sua primeira compra na aba Registrar.</div>';return}$("history").innerHTML=list.map(e=>`<article class="entry"><div class="entry-main"><div class="entry-title">${safe(e.description)}</div><div class="meta">${safe(e.date)} · ${safe(e.category)}<br>${safe(e.paidBy)} · ${safe(e.payment)}${e.notes?'<br>'+safe(e.notes):''}</div><div class="actions"><button class="btn secondary" onclick="editExpense(${e.id})">✏️ Editar</button><button class="btn danger" onclick="deleteExpense(${e.id})">Excluir</button></div></div><div class="entry-amount">${money(e.amount)}</div></article>`).join("")}
+function renderSummary(){const total=expenses.reduce((s,e)=>s+Number(e.amount),0),giftTotal=gifts.reduce((s,g)=>s+Number(g.value),0);$("summaryGiftTotal").textContent=money(giftTotal);$("netTotal").textContent=money(total-giftTotal);const used=CATEGORIES.map(c=>({c,v:expenses.filter(e=>e.category===c).reduce((s,e)=>s+Number(e.amount),0)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);$("summaryIntro").textContent=`${expenses.length} lançamentos · Total investido: ${money(total)}`;if(!used.length){$("summary").innerHTML='<div class="empty">Seu resumo aparecerá quando você registrar despesas.</div>';return}$("summary").innerHTML=used.map(x=>`<div class="catrow"><div class="catline"><span>${safe(x.c)}</span><strong>${money(x.v)}</strong></div><div class="bar"><div style="width:${total?x.v/total*100:0}%"></div></div><div class="meta">${total?(x.v/total*100).toFixed(1):0}% dos gastos</div></div>`).join("")+`<hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>Quem pagou?</h2>`+["André","Tays","Ambos"].map(p=>`<div class="catline" style="margin:12px 0"><span>${p}</span><strong>${money(expenses.filter(e=>e.paidBy===p).reduce((s,e)=>s+Number(e.amount),0))}</strong></div>`).join("")}
+$("search").addEventListener("input",renderHistory);$("filterCategory").addEventListener("change",renderHistory);
+function csv(){const rows=[["Data","Descrição","Categoria","Valor USD","Responsável","Pagamento","Observações"],...expenses.map(e=>[e.date,e.description,e.category,Number(e.amount).toFixed(2),e.paidBy,e.payment,e.notes||""])];return rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n")}
+$("exportBtn").addEventListener("click",async()=>{const data=csv();try{await navigator.clipboard.writeText(data);toast("CSV copiado! Cole em uma planilha.")}catch{download("meu-motorhome-gastos.csv",data,"text/csv;charset=utf-8")}})
+function download(name,data,type){const a=document.createElement("a"),url=URL.createObjectURL(new Blob([data],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$("backupBtn").addEventListener("click",()=>download("backup-meu-motorhome.json",JSON.stringify({version:2,budget:$("budget").value,expenses,gifts},null,2),"application/json"));
+$("importFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const obj=JSON.parse(await file.text());if(!Array.isArray(obj.expenses))throw Error();if(!confirm("Importar este backup substituirá os lançamentos atuais. Continuar?"))return;expenses=obj.expenses;gifts=Array.isArray(obj.gifts)?obj.gifts:[];$("budget").value=obj.budget||"30000";persist();toast("Backup importado!")}catch{alert("Não foi possível importar. Escolha um backup JSON válido.")}e.target.value=""});
+
+$("giftDate").value=new Date().toLocaleDateString("en-CA");
+$("giftForm").addEventListener("submit",e=>{e.preventDefault();const item={id:editingGiftId??(Date.now()+Math.floor(Math.random()*1000)),product:$("giftProduct").value.trim(),value:Math.round(Number($("giftValue").value)*100)/100,date:$("giftDate").value,brand:$("giftBrand").value.trim(),type:$("giftType").value,notes:$("giftNotes").value.trim()};if(!item.product||item.value<=0)return;if(editingGiftId!==null)gifts=gifts.map(x=>x.id===editingGiftId?item:x);else gifts.unshift(item);cancelGiftEdit();persist();toast("Produto de parceria salvo!")});
+function cancelGiftEdit(){$("giftForm").reset();$("giftDate").value=new Date().toLocaleDateString("en-CA");editingGiftId=null;$("giftFormTitle").textContent="Registrar produto recebido sem custo";$("giftSaveBtn").textContent="Salvar produto recebido";$("giftCancelEdit").classList.add("hidden")}
+$("giftCancelEdit").addEventListener("click",cancelGiftEdit);
+function editGift(id){const g=gifts.find(x=>x.id===id);if(!g)return;editingGiftId=id;for(const [field,key] of [["giftProduct","product"],["giftValue","value"],["giftDate","date"],["giftBrand","brand"],["giftType","type"],["giftNotes","notes"]])$(field).value=g[key]??"";$("giftFormTitle").textContent="Editar produto de parceria";$("giftSaveBtn").textContent="Salvar alterações";$("giftCancelEdit").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}
+function deleteGift(id){if(!confirm("Excluir este produto da lista de parcerias?"))return;gifts=gifts.filter(x=>x.id!==id);if(editingGiftId===id)cancelGiftEdit();persist();toast("Produto removido")}
+function renderGifts(){const total=gifts.reduce((s,g)=>s+Number(g.value),0);$("giftTotal").textContent=money(total);$("giftCount").textContent=gifts.length;if(!gifts.length){$("giftHistory").innerHTML='<div class="empty">Nenhum produto cadastrado ainda. Adicione o primeiro produto recebido em parceria acima.</div>';return}$("giftHistory").innerHTML=[...gifts].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(g=>`<article class="entry"><div class="entry-main"><div class="entry-title">${safe(g.product)}</div><div class="meta">${safe(g.date)} · ${safe(g.type)}${g.brand?'<br>Marca: '+safe(g.brand):''}${g.notes?'<br>'+safe(g.notes):''}</div><div class="actions"><button class="btn secondary" onclick="editGift(${g.id})">✏️ Editar</button><button class="btn danger" onclick="deleteGift(${g.id})">Excluir</button></div></div><div class="entry-amount">${money(g.value)}</div></article>`).join("")}
+function giftCsv(){const rows=[["Data","Produto","Marca","Tipo de parceria","Valor de mercado USD","Observações"],...gifts.map(g=>[g.date,g.product,g.brand,g.type,Number(g.value).toFixed(2),g.notes||""])];return rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\\r\\n")}
+$("giftExportBtn").addEventListener("click",async()=>{const data=giftCsv();try{await navigator.clipboard.writeText(data);toast("Lista de parcerias copiada!")}catch{download("meu-motorhome-parcerias.csv",data,"text/csv;charset=utf-8")}});
+
+render();
+</script>
+<script>if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./sw.js").catch(()=>{});</script>
+</body></html>
